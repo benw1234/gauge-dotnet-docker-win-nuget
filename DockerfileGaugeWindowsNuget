@@ -1,0 +1,17 @@
+FROM jenniferz79/gaugedotnetwin
+
+# Install Powershell for dotnet 2.x
+USER ContainerAdministrator
+RUN setx /M PATH "%PATH%;C:\Users\ContainerUser\.dotnet\tools"
+USER ContainerUser
+RUN dotnet tool install --global PowerShell --version 6.2.7
+
+# Install Credential Provider for Azure Nuget Seed
+COPY installcredprovider.ps1 .
+RUN pwsh ./installcredprovider.ps1 -Force
+
+# Install Azure Artifacts Credential Provider, to get Nuget package DS_AUT.Framework on Azure
+ENV NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED true
+
+# Set environment variable for FEED_URL and Personal Access Token during run time.
+# ENV VSS_NUGET_EXTERNAL_FEED_ENDPOINTS "{\"endpointCredentials\": [{\"endpoint\":\"${FEED_URL}\", \"username\":\"docker\", \"password\":\"${PAT}\"}]}"
