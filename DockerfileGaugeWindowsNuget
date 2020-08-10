@@ -1,4 +1,6 @@
 FROM jenniferz79/gaugedotnetwin
+# Set Gauge API timeout to 60s for big project need more time to do dotnet restore.
+ARG GAUGE_TIMEOUT=60000
 
 # Install Powershell for dotnet 2.x
 USER ContainerAdministrator
@@ -15,3 +17,7 @@ ENV NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED true
 
 # Set environment variable for FEED_URL and Personal Access Token during run time.
 # ENV VSS_NUGET_EXTERNAL_FEED_ENDPOINTS "{\"endpointCredentials\": [{\"endpoint\":\"${FEED_URL}\", \"username\":\"docker\", \"password\":\"${PAT}\"}]}"
+
+# Disable gauge for auto checking update
+Run gauge config check_updates false
+RUN gauge config runner_connection_timeout %GAUGE_TIMEOUT%
